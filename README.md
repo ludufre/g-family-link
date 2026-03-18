@@ -1,5 +1,5 @@
 <p align="center"><br>
-<img src="https://play-lh.googleusercontent.com/RhRc5SjFvfOcmGSFJkse2ex1G5xuw9vEaj2sNm7JBOvDUz_vBRTSoE-X9jLmQ4mAig=s128" width="128" height="128" />
+<img src="https://play-lh.googleusercontent.com/rfQsLTQvlTitGF915EPBDlCH8UsuAk649xftN-GPi_s_ORnfVLSCX9MEs1AGflbNOGo=w480-h960-rw" width="128" height="128" />
 </p>
 
 ### g-family-link

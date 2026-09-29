@@ -426,7 +426,8 @@ var FamilyLink = class _FamilyLink {
       profile: {
         displayName: m.profile.displayName,
         email: m.profile.email,
-        photoUrl: m.profile.photoUrl
+        // The API sends `profileImageUrl` (public lh3.googleusercontent.com URL)
+        photoUrl: m.profile.profileImageUrl ?? m.profile.photoUrl
       },
       isSupervisedMember: true
     }));
@@ -862,7 +863,7 @@ function hasSavedCookies() {
 
 // src/cli.ts
 var program = new Command();
-program.name("g-family-link").description("Google Family Link API client (time control)").version("1.1.0").option("--auth-user <n>", "Google account index (when multiple accounts are logged in)", "0");
+program.name("g-family-link").description("Google Family Link API client (time control)").version("1.1.1").option("--auth-user <n>", "Google account index (when multiple accounts are logged in)", "0");
 function getClient() {
   const cookies = loadCookies();
   if (!cookies || cookies.length === 0) {

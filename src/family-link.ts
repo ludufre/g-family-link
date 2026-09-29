@@ -75,7 +75,8 @@ export class FamilyLink {
         profile: {
           displayName: m.profile.displayName,
           email: m.profile.email,
-          photoUrl: m.profile.photoUrl,
+          // The API sends `profileImageUrl` (public lh3.googleusercontent.com URL)
+          photoUrl: m.profile.profileImageUrl ?? m.profile.photoUrl,
         },
         isSupervisedMember: true,
       }))

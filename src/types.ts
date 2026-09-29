@@ -36,6 +36,13 @@ export interface FamilyMembersResponse {
     profile: {
       displayName: string
       email?: string
+      /** Public avatar URL (what the API actually sends) */
+      profileImageUrl?: string
+      /** Google's generic avatar, when the member has no photo */
+      defaultProfileImageUrl?: string
+      givenName?: string
+      familyName?: string
+      /** @deprecated not sent by the API; kept for compatibility */
       photoUrl?: string
     }
     memberSupervisionInfo?: {

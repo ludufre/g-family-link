@@ -33,7 +33,7 @@ Returned by `fl.getChildren()`.
 | `userId` | `string` | Unique user ID (use this in all other methods) |
 | `profile.displayName` | `string` | Child's display name |
 | `profile.email` | `string?` | Child's email (if available) |
-| `profile.photoUrl` | `string?` | Profile photo URL |
+| `profile.photoUrl` | `string?` | Profile photo URL (public; from the API's `profileImageUrl`) |
 | `isSupervisedMember` | `boolean` | Always `true` (filtered) |
 
 ---

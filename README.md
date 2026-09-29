@@ -49,6 +49,10 @@ pnpm add -g g-family-link
 
 ## Changelog
 
+### 1.1.1
+
+- `getChildren()` now fills `profile.photoUrl` — the API sends the avatar as `profileImageUrl`, so it was always `undefined`.
+
 ### 1.1.0
 
 - `getScreenTimeByDay(accountId)` — screen time of every day in the usage payload (about a week) from a single request; `getDailyScreenTime` now uses it.

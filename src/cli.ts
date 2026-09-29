@@ -11,7 +11,7 @@ const program = new Command()
 program
   .name('g-family-link')
   .description('Google Family Link API client (time control)')
-  .version('1.1.0')
+  .version('1.1.1')
   .option('--auth-user <n>', 'Google account index (when multiple accounts are logged in)', '0')
 
 function getClient(): FamilyLink {

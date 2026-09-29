@@ -14,7 +14,7 @@ Unofficial TypeScript client for the Google Family Link API — usable as a **li
 >
 > **Note to Google employees:** If this repository raises any concerns regarding intellectual property, terms of service, or any other matter, please reach out via [GitHub Issues](https://github.com/ludufre/g-family-link/issues) or directly to [@ludufre](https://github.com/ludufre). I will promptly take down or modify the repository upon request — no legal action necessary.
 
-[![Maintenance](https://img.shields.io/maintenance/yes/2025?style=flat-square)](https://github.com/ludufre/g-family-link)
+[![Maintenance](https://img.shields.io/maintenance/yes/2026?style=flat-square)](https://github.com/ludufre/g-family-link)
 [![NPM License](https://img.shields.io/npm/l/g-family-link?style=flat-square)](https://www.npmjs.com/package/g-family-link)
 [![NPM Downloads](https://img.shields.io/npm/dw/g-family-link?style=flat-square)](https://www.npmjs.com/package/g-family-link)
 [![NPM Version](https://img.shields.io/npm/v/g-family-link?style=flat-square)](https://www.npmjs.com/package/g-family-link)
@@ -46,6 +46,17 @@ pnpm add -g g-family-link
 - [CLI Reference](./docs/cli.md) — authentication, all commands and options
 - [Library API](./docs/library.md) — `FamilyLink` class, methods, and low-level API
 - [Types Reference](./docs/types.md) — types, interfaces, and errors
+
+## Changelog
+
+### 1.1.0
+
+- `getScreenTimeByDay(accountId)` — screen time of every day in the usage payload (about a week) from a single request; `getDailyScreenTime` now uses it.
+- `FamilyLink.fromCookieHeader(header, authUser?)` and `parseCookieHeader(header)` — authenticate with the raw `cookie` request header copied from DevTools, no browser extension needed.
+
+### 1.0.0
+
+- Initial release.
 
 ## Building from source
 

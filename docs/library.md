@@ -17,6 +17,9 @@ const fl = FamilyLink.fromCookies(cookies)
 | Method | Description |
 |--------|-------------|
 | `FamilyLink.fromCookies(cookies, authUser?)` | Create from cookies with optional account index |
+| `FamilyLink.fromCookieHeader(header, authUser?)` | Create from the raw `cookie` request header copied from DevTools (Network → any familylink.google.com request → Request Headers) — no extension needed |
+
+`parseCookieHeader(header)` is exported too, if you need the `Cookie[]` yourself.
 
 ### `authUser` parameter
 
@@ -57,6 +60,10 @@ const st = await fl.getDailyScreenTime(childId)  // DailyScreenTime
 
 // Specific date
 const st = await fl.getDailyScreenTime(childId, new Date('2025-01-15'))
+
+// Every day in the payload (about a week) from ONE request —
+// prefer this over calling getDailyScreenTime once per day
+const days = await fl.getScreenTimeByDay(childId)  // Record<'YYYY-MM-DD', DailyScreenTime>
 ```
 
 ### Lock / Unlock device

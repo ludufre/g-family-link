@@ -392,6 +392,13 @@ var FamilyLink = class _FamilyLink {
     const auth = Authenticator.fromCookies(cookies, authUser);
     return new _FamilyLink(auth);
   }
+  /**
+   * Create from the raw `cookie` request header copied from DevTools
+   * ("SID=…; HSID=…; SAPISID=…") — no browser extension needed.
+   */
+  static fromCookieHeader(header, authUser = 0) {
+    return _FamilyLink.fromCookies(parseCookieHeader(header), authUser);
+  }
   /** Current account index. */
   get authUser() {
     return this._auth.authUser;
@@ -445,33 +452,34 @@ var FamilyLink = class _FamilyLink {
   // ---------------------------------------------------------------------------
   async getDailyScreenTime(accountId, date) {
     const target = date ?? /* @__PURE__ */ new Date();
+    const days = await this.getScreenTimeByDay(accountId);
+    return days[dayKey(target.getFullYear(), target.getMonth() + 1, target.getDate())] ?? toDaily(0, {});
+  }
+  /**
+   * Screen time of every day in the usage payload (Google keeps about a week),
+   * from a single request — `getDailyScreenTime` per day would refetch it.
+   *
+   * @returns Map of `YYYY-MM-DD` (local date of the session) → daily usage
+   */
+  async getScreenTimeByDay(accountId) {
     const data = (await this._api.getAppsAndUsage(accountId)).json;
     const sessions = data.appUsageSessions ?? [];
-    let totalSeconds = 0;
-    const appBreakdown = {};
+    const perDay = {};
     for (const session of sessions) {
       const sd = session.date;
-      if (sd?.year === target.getFullYear() && sd?.month === target.getMonth() + 1 && sd?.day === target.getDate()) {
-        const usage = parseFloat((session.usage ?? "0s").replace("s", ""));
-        if (!isNaN(usage)) {
-          totalSeconds += usage;
-          const pkg = session.appId?.androidAppPackageName ?? "unknown";
-          appBreakdown[pkg] = (appBreakdown[pkg] ?? 0) + usage;
-        }
-      }
+      if (!sd) continue;
+      const usage = parseFloat((session.usage ?? "0s").replace("s", ""));
+      if (isNaN(usage)) continue;
+      const key = dayKey(sd.year, sd.month, sd.day);
+      const pkg = session.appId?.androidAppPackageName ?? "unknown";
+      perDay[key] ??= {};
+      perDay[key][pkg] = (perDay[key][pkg] ?? 0) + usage;
     }
-    const hours = Math.floor(totalSeconds / 3600);
-    const minutes = Math.floor(totalSeconds % 3600 / 60);
-    const seconds = Math.floor(totalSeconds % 60);
-    const pad = (n) => String(n).padStart(2, "0");
-    return {
-      totalSeconds,
-      formatted: `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`,
-      hours,
-      minutes,
-      seconds,
-      appBreakdown
-    };
+    const out = {};
+    for (const [key, apps] of Object.entries(perDay)) {
+      out[key] = toDaily(Object.values(apps).reduce((s, v) => s + v, 0), apps);
+    }
+    return out;
   }
   // ---------------------------------------------------------------------------
   // Device lock / unlock
@@ -590,6 +598,29 @@ var FamilyLink = class _FamilyLink {
     return rules.schooltimeRuleId;
   }
 };
+function parseCookieHeader(header) {
+  return header.replace(/^cookie:\s*/i, "").split(";").map((pair) => pair.trim()).filter(Boolean).map((pair) => {
+    const i = pair.indexOf("=");
+    return { name: pair.slice(0, i).trim(), value: pair.slice(i + 1).trim(), domain: ".google.com", path: "/" };
+  }).filter((c) => c.name);
+}
+function dayKey(year, month, day) {
+  return `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+}
+function toDaily(totalSeconds, appBreakdown) {
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor(totalSeconds % 3600 / 60);
+  const seconds = Math.floor(totalSeconds % 60);
+  const pad = (n) => String(n).padStart(2, "0");
+  return {
+    totalSeconds,
+    formatted: `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`,
+    hours,
+    minutes,
+    seconds,
+    appBreakdown
+  };
+}
 function isoWeekday() {
   const day = (/* @__PURE__ */ new Date()).getDay();
   return day === 0 ? 7 : day;
@@ -831,7 +862,7 @@ function hasSavedCookies() {
 
 // src/cli.ts
 var program = new Command();
-program.name("g-family-link").description("Google Family Link API client (time control)").version("1.0.0").option("--auth-user <n>", "Google account index (when multiple accounts are logged in)", "0");
+program.name("g-family-link").description("Google Family Link API client (time control)").version("1.1.0").option("--auth-user <n>", "Google account index (when multiple accounts are logged in)", "0");
 function getClient() {
   const cookies = loadCookies();
   if (!cookies || cookies.length === 0) {

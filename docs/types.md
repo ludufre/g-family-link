@@ -53,7 +53,7 @@ Returned by `fl.getDevices(accountId)`.
 
 ## `DailyScreenTime`
 
-Returned by `fl.getDailyScreenTime(accountId)`.
+Returned by `fl.getDailyScreenTime(accountId)` (and per day by `fl.getScreenTimeByDay(accountId)`).
 
 | Property | Type | Description |
 |----------|------|-------------|

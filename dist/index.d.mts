@@ -130,6 +130,11 @@ declare class FamilyLink {
      * @param authUser - Account index when multiple Google accounts are logged in (default: 0)
      */
     static fromCookies(cookies: Cookie[], authUser?: number): FamilyLink;
+    /**
+     * Create from the raw `cookie` request header copied from DevTools
+     * ("SID=…; HSID=…; SAPISID=…") — no browser extension needed.
+     */
+    static fromCookieHeader(header: string, authUser?: number): FamilyLink;
     /** Current account index. */
     get authUser(): number;
     /** Switch to a different Google account (when multiple are logged in). */
@@ -137,6 +142,13 @@ declare class FamilyLink {
     getChildren(): Promise<FamilyMember[]>;
     getDevices(accountId: string): Promise<DeviceInfo[]>;
     getDailyScreenTime(accountId: string, date?: Date): Promise<DailyScreenTime>;
+    /**
+     * Screen time of every day in the usage payload (Google keeps about a week),
+     * from a single request — `getDailyScreenTime` per day would refetch it.
+     *
+     * @returns Map of `YYYY-MM-DD` (local date of the session) → daily usage
+     */
+    getScreenTimeByDay(accountId: string): Promise<Record<string, DailyScreenTime>>;
     lockDevice(accountId: string, deviceId: string): Promise<boolean>;
     unlockDevice(accountId: string, deviceId: string): Promise<boolean>;
     getAppliedTimeLimits(accountId: string): Promise<AppliedTimeLimitsResult>;
@@ -169,6 +181,8 @@ declare class FamilyLink {
     private _getBedtimeRuleId;
     private _getSchoolTimeRuleId;
 }
+/** `cookie` header → Cookie[] (all scoped to .google.com). */
+declare function parseCookieHeader(header: string): Cookie[];
 
 interface ApiResponse<T = unknown> {
     status: number;
@@ -214,4 +228,4 @@ declare class DeviceControlError extends HttpError {
     constructor(message?: string);
 }
 
-export { type ApiResponse, type AppUsageSession, type AppliedTimeLimitsResult, AuthenticationError, Authenticator, type BedtimeScheduleEntry, type Cookie, type Credentials, type DailyScreenTime, DeviceControlError, type DeviceInfo, type DeviceTimeLimitInfo, FamilyLink, FamilyLinkAPI, type FamilyMember, type FamilyMembersResponse, HttpError, NetworkError, SessionExpiredError, type TimeLimitRules, type TimeWindow };
+export { type ApiResponse, type AppUsageSession, type AppliedTimeLimitsResult, AuthenticationError, Authenticator, type BedtimeScheduleEntry, type Cookie, type Credentials, type DailyScreenTime, DeviceControlError, type DeviceInfo, type DeviceTimeLimitInfo, FamilyLink, FamilyLinkAPI, type FamilyMember, type FamilyMembersResponse, HttpError, NetworkError, SessionExpiredError, type TimeLimitRules, type TimeWindow, parseCookieHeader };

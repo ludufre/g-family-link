@@ -1,4 +1,4 @@
-export { FamilyLink } from './family-link.js'
+export { FamilyLink, parseCookieHeader } from './family-link.js'
 export { Authenticator } from './authenticator.js'
 export { FamilyLinkAPI } from './api.js'
 export type { ApiResponse } from './api.js'
